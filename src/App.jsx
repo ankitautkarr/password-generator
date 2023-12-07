@@ -1,54 +1,45 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 function App() {
   const [length, setLength] = useState(8);
-  const [numAlow, setNumAlow] = useState(false);
-  const [charAlow, setCharAlow] = useState(false);
+  const [charAllow, setCharAllow] = useState(false);
+  const [numAllow, setnumAllow] = useState(false);
   const [password, setPassword] = useState('');
-  const passwordRef = useRef(null);
 
-  const passGenerator = useCallback(() => {
+  const passwordGenerator = useCallback(() => {
     let pass = '';
-    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-    if (numAlow) {
-      str += '0123456789';
+    let str = 'ASDFGHJKLQWERTYUIOPZXCVBNMasdfghjklqwertyuiopzxcvbnm';
+    if (numAllow) {
+      str += '1234567890';
     }
 
-    if (charAlow) {
-      str += '!@#$%^&*(){}';
+    if (charAllow) {
+      str += '@#&*';
     }
-
     for (let i = 1; i <= length; i++) {
       let char = Math.floor(Math.random() * str.length + 1);
-
       pass += str.charAt(char);
     }
+
     setPassword(pass);
-  }, [length, numAlow, charAlow, setPassword]);
-
-  const passCopy = useCallback(() => {
-    passwordRef.current?.select();
-    // passwordRef.current?.setSelectionRange(2, 5);
-    window.navigator.clipboard.writeText(password);
-  }, [password]);
-
-  const notify = () => {
-    toast('Password copied to clipboard successfully!');
-  };
+  }, [length, numAllow, charAllow, setPassword]);
 
   useEffect(() => {
-    passGenerator();
-  }, [length, numAlow, charAlow, passGenerator]);
+    passwordGenerator();
+  }, [length, numAllow, charAllow, passwordGenerator]);
+
+  const passRef = useRef(null);
+
+  const copyPass = () => {
+    window.navigator.clipboard.writeText(password);
+  };
+
   return (
     <>
-      <ToastContainer />
-      <h1 className="text-sm p-4 text-black">Rinal Love Ankit</h1>
-
+      {/* <div className="text-white font-bold">Rinal ❤️ Ankit</div> */}
       <div className="w-full max-w-md mx-auto shadow-md text-center rounded-lg px-4 my-8 text-orange-500 bg-gray-800 p-2">
         <h1 className="text-2xl text-center text-white p-4 m-2">
+          {' '}
           Password Generator
         </h1>
 
@@ -56,28 +47,24 @@ function App() {
           <input
             type="text"
             value={password}
-            placeholder="Passowrd"
+            placeholder="Password"
             className="outline-none w-full py-1 px-3"
             readOnly
-            ref={passwordRef}
+            ref={passRef}
           />
           <button
             className="outline-none text-white bg-blue-700 text-blue px-3 py-0.5 shrink-0 font-bold hover:bg-orange-900"
-            onClick={() => {
-              passCopy();
-              notify();
-            }}
+            onClick={copyPass}
           >
             Copy
           </button>
         </div>
-        <div>
+        <div className="flex text-sm gap-x-2">
           <div className="flex text-sm gap-x-2 ">
-            <div className="flex items-center gap-x-1"></div>
             <input
               type="range"
               min={8}
-              max={14}
+              max={20}
               value={length}
               className="cursor-pointer"
               onChange={(e) => {
@@ -85,27 +72,28 @@ function App() {
               }}
             />
             <label>Length:{length}</label>
-            <div className="flex items-center gap-x-1 "></div>
-            <input
-              type="checkbox"
-              defaultChecked={numAlow}
-              id="numInput"
-              onChange={() => {
-                setNumAlow((prev) => !prev);
-              }}
-            />
-            <label htmlFor="numberInput">Numbers</label>
+            <div className="flex items-center gap-x-1 ">
+              <input
+                type="checkbox"
+                defaultChecked={numAllow}
+                id="numberInput"
+                onChange={() => {
+                  setnumAllow((prev) => !prev);
+                }}
+              />
+              <label>Numbers</label>
+            </div>
 
             <div className="flex items-center gap-x-1 ">
               <input
                 type="checkbox"
-                defaultChecked={charAlow}
+                defaultChecked={charAllow}
                 id="charInput"
                 onChange={() => {
-                  setCharAlow((prevChar) => !prevChar);
+                  setCharAllow((prevChar) => !prevChar);
                 }}
               />
-              <label htmlFor="charInput">Charecters</label>
+              <label>Charecters</label>
             </div>
           </div>
         </div>
